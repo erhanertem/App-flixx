@@ -68,8 +68,8 @@ async function displayMovieDetails() {
 		production_companies,
 		backdrop_path,
 		poster_path,
+		overview,
 	} = data;
-
 	const movieEl = document.querySelector('#movie-details');
 	movieEl.innerHTML = ` 
       <div class="details-top">
@@ -86,11 +86,7 @@ async function displayMovieDetails() {
 				</p>
 				<p class="text-muted">Release Date: ${release_date}</p>
 				<p>
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores atque molestiae error debitis provident
-					dolore hic odit, impedit sint, voluptatum consectetur assumenda expedita perferendis obcaecati veritatis
-					voluptatibus. Voluptatum repellat suscipit, quae molestiae cupiditate modi libero dolorem commodi
-					obcaecati! Ratione quia corporis recusandae delectus perspiciatis consequatur ipsam. Cumque omnis ad
-					recusandae.
+					${overview}
 				</p>
 				<h5>Genres</h5>
 				<ul class="list-group">
@@ -120,8 +116,8 @@ async function displayMovieDetails() {
 }
 
 async function displayPopularShows() {
-	const { results } = await fetchAPIData('movie/popular');
-
+	const { results } = await fetchAPIData('tv/popular');
+	console.log(results[0]);
 	results.forEach((show) => {
 		// Mock the show card
 		const showEl = document.createElement('div');
@@ -130,12 +126,12 @@ async function displayPopularShows() {
 			<a href="tv-details.html?id=${show.id}">
             <img src=${
 					show.poster_path ? `https://image.tmdb.org/t/p/w500${show.poster_path}` : 'images/no-image.jpg'
-				} class="card-img-top" alt=${show.title} />
+				} class="card-img-top" alt=${show.name} />
 			</a>
 			<div class="card-body">
-				<h5 class="card-title">${show.title}</h5>
+				<h5 class="card-title">${show.name}</h5>
 				<p class="card-text">
-					<small class="text-muted">Aired on ${show.release_date}</small>
+					<small class="text-muted">First Aired on ${show.first_air_date}</small>
 				</p>
 			</div>
       `;
@@ -144,6 +140,73 @@ async function displayPopularShows() {
 		document.querySelector('#popular-shows').appendChild(showEl);
 	});
 }
+
+// READ THE SHOW FROM THE BROWSER PATH - SIMILAR TO WHAT WE SEE IN REACT APPS
+async function displayShowDetails() {
+	const showId = window.location.search.split('=')[1];
+
+	const data = await fetchAPIData(`tv/${showId}`);
+	console.log(data);
+
+	const {
+		backdrop_path,
+		original_name,
+		poster_path,
+		vote_average,
+		first_air_date,
+		overview,
+		genres,
+		homepage,
+		production_companies,
+		number_of_episodes,
+		last_episode_to_air,
+		status,
+	} = data;
+
+	const showEl = document.querySelector('#show-details');
+	showEl.innerHTML = `
+   <div class="details-top">
+					<div>
+						<img src=${
+							poster_path ? `https://image.tmdb.org/t/p/w500${poster_path}` : 'images/no-image.jpg'
+						} class="card-img-top" alt=${original_name} />
+					</div>
+					<div>
+						<h2>${original_name}</h2>
+						<p>
+							<i class="fas fa-star text-primary"></i>
+							${vote_average.toFixed(0)} / 10
+						</p>
+						<p class="text-muted">Release Date: ${first_air_date}</p>
+						<p>
+							${overview}
+						</p>
+						<h5>Genres</h5>
+						<ul class="list-group">
+							${genres
+								.map((genre) => {
+									return `<li>${genre.name}</li>`;
+								})
+								.join('')}
+						</ul>
+						<a href=${homepage} target="_blank" class="btn">Visit Show Homepage</a>
+					</div>
+				</div>
+				<div class="details-bottom">
+					<h2>Show Info</h2>
+					<ul>
+						<li><span class="text-secondary">Number Of Episodes:</span> ${number_of_episodes}</li>
+						<li><span class="text-secondary">Last Episode To Air:</span> ${last_episode_to_air.name}</li>
+						<li><span class="text-secondary">Status:</span> ${status}</li>
+					</ul>
+					<h4>Production Companies</h4>
+					<div class="list-group">${production_companies.map((company) => company.name).join(', ')}</div>
+				</div>`;
+
+	// Overlay the background image
+	displayBackgroundImage('tv', backdrop_path);
+}
+
 // SPINNER
 function showSpinner(state) {
 	state
@@ -195,8 +258,7 @@ function init() {
 			displayMovieDetails();
 			break;
 		case '/tv-details.html':
-			console.log('TV DETAILS');
-			// tvDetailsPage();
+			displayShowDetails();
 			break;
 		case '/search.html':
 			console.log('SEARCH');
