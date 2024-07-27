@@ -27,6 +27,29 @@ async function displayPopularMovies() {
 	});
 }
 
+// Overlay the background image
+function displayBackgroundImage(type, uri) {
+	// CREATE THE BACKGROUND
+	const overlay = document.createElement('div');
+	overlay.style.backgroundImage = `url(https://image.tmdb.org/t/p/original${uri})`;
+	overlay.style.position = 'absolute';
+	overlay.style.width = '100vw';
+	overlay.style.height = '100vh';
+	overlay.style.backgroundPosition = 'center';
+	overlay.style.backgroundRepeat = 'no-repeat';
+	overlay.style.top = '0';
+	overlay.style.left = '0';
+	overlay.style.zIndex = '-1';
+	overlay.style.opacity = '0.1';
+
+	// CHECK WHERE TO APPLY - TYPE
+	if (type === 'movie') {
+		document.querySelector('#movie-details').appendChild(overlay);
+	} else {
+		document.querySelector('#show-details').appendChild(overlay);
+	}
+}
+
 // READ THE MOVIE FROM THE BROWSER PATH - SIMILAR TO WHAT WE SEE IN REACT APPS
 async function displayMovieDetails() {
 	const movieId = window.location.search.split('=')[1];
@@ -43,13 +66,17 @@ async function displayMovieDetails() {
 		runtime,
 		genres,
 		production_companies,
+		backdrop_path,
+		poster_path,
 	} = data;
 
 	const movieEl = document.querySelector('#movie-details');
 	movieEl.innerHTML = ` 
       <div class="details-top">
 			<div>
-				<img src="images/no-image.jpg" class="card-img-top" alt= ${original_title} />
+				<img src=${
+					poster_path ? `https://image.tmdb.org/t/p/w500${poster_path}` : 'images/no-image.jpg'
+				} class="card-img-top" alt= ${original_title} />
 			</div>
 			<div>
 				<h2>${original_title}</h2>
@@ -87,6 +114,9 @@ async function displayMovieDetails() {
 			<h4>Production Companies</h4>
 			<div class="list-group"> ${production_companies.map((company) => company.name).join(', ')}</div>
 		</div>`;
+
+	// Overlay the background image
+	displayBackgroundImage('movie', backdrop_path);
 }
 
 async function displayPopularShows() {
