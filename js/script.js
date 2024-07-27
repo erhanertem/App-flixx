@@ -306,9 +306,11 @@ function displaySearchResults(results) {
 			</div>
       `;
 
-		document.querySelector(
-			'#search-results-heading'
-		).innerHTML = `<h2>${results.length} of ${globalState.search.totalResults} Results for ${globalState.search.term}</h2>`;
+		document.querySelector('#search-results-heading').innerHTML = `<h2>${
+			globalState.search.page !== globalState.search.totalPages
+				? results.length * globalState.search.page
+				: globalState.search.totalResults
+		} of ${globalState.search.totalResults} Results for ${globalState.search.term}</h2>`;
 
 		// Append show elements to the container
 		document.querySelector('#search-results').append(itemEl);
@@ -317,7 +319,55 @@ function displaySearchResults(results) {
 	displayPagination();
 }
 
-function displayPagination() {}
+// CREATE AND DIPLAY PAGINATION
+function displayPagination() {
+	// RENDER ON UI
+	const div = document.createElement('div');
+	div.classList.add('pagination');
+	const html = ` 
+      <div class="pagination">
+			<button class="btn btn-primary" id="prev">Prev</button>
+			<button class="btn btn-primary" id="next">Next</button>
+			<div class="page-counter">Page ${globalState.search.page} of ${globalState.search.totalPages}</div>
+		</div>`;
+	div.innerHTML = html;
+	document.querySelector('#pagination').appendChild(div);
+
+	// GUARD CLAUSE FOR ACTIVE PREV/NEXT BTNS
+	// DISABLE PREV BTN IF ON 1ST PAGE
+	if (globalState.search.page === 1) {
+		document.querySelector('#prev').disabled = true;
+	} else {
+		document.querySelector('#prev').disabled = false;
+	}
+	// DISABLE NEXT BTN IF ON LAST PAGE
+	if (globalState.search.page === globalState.search.totalPages) {
+		document.querySelector('#next').disabled = true;
+	} else {
+		document.querySelector('#next').disabled = false;
+	}
+
+	// EVENT LISTENERS FOR PREV/NEXT BTNS
+	document.querySelector('#prev').addEventListener('click', () => {
+		globalState.search.page--;
+
+		clearSearchContainers();
+		search();
+	});
+
+	document.querySelector('#next').addEventListener('click', () => {
+		globalState.search.page++;
+
+		clearSearchContainers();
+		search();
+	});
+}
+
+function clearSearchContainers() {
+	document.querySelector('#search-results').innerHTML = '';
+	document.querySelector('#pagination').innerHTML = '';
+	document.querySelector('#search-results-heading').innerHTML = '';
+}
 
 // FETCH DATA FROM TMDB API
 async function searchAPIData() {
@@ -325,7 +375,7 @@ async function searchAPIData() {
 		showSpinner(true);
 		// GET RES FROM API
 		const response = await fetch(
-			`${API_URL}search/${globalState.search.type}?api_key=${API_KEY}&language=en-US&query=${globalState.search.term}`
+			`${API_URL}search/${globalState.search.type}?api_key=${API_KEY}&language=en-US&query=${globalState.search.term}&page=${globalState.search.page}`
 		);
 		// GUARD CLAUSE - IF NO RES FROM SERVER THROW ERR
 		if (!response.ok) {
