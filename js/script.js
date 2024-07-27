@@ -124,7 +124,7 @@ async function displayMovieDetails() {
 
 async function displayPopularShows() {
 	const { results } = await fetchAPIData('tv/popular');
-	console.log(results[0]);
+
 	results.forEach((show) => {
 		// Mock the show card
 		const showEl = document.createElement('div');
@@ -253,18 +253,56 @@ function highlightActiveLink() {
 
 // Seach Movies/shows
 async function search() {
+	// READ PARAMS FROM BROWSER URL
 	const queryString = window.location.search.split('?')[1];
 	const urlParams = new URLSearchParams(queryString);
-
+	// WRITE THEM DOWN TO GLOBAL STATE TEMPORARILY
 	globalState.search.type = urlParams.get('type');
 	globalState.search.term = urlParams.get('search-term');
 
+	// MAKE A SEARCH WITH THOESE PARAMS
 	if (globalState.search.term !== '' && globalState.search.term !== null) {
-		const results = await searchAPIData();
-		console.log(results);
+		const { results, total_pages, page } = await searchAPIData();
+		// GUARD CLAUSE
+		if (results.length === 0) {
+			showAlert('No results found');
+			return;
+		}
+
+		// DISPLAY THE REUSLTS IF SOMETHING IS RETURNED
+		displaySearchResults(results);
+		// CLEAR THE INPUT FIELD
+		document.querySelector('#search-term').value = '';
+		// RESET THE PARAMS STATES
 	} else {
 		showAlert('Please enter a search term');
 	}
+}
+
+function displaySearchResults(results) {
+	console.log(results);
+	results.forEach((result) => {
+		// Mock the item card
+		const itemEl = document.createElement('div');
+		itemEl.classList.add('card');
+		itemEl.innerHTML = ` 
+			<a href="${globalState.search.type}-details.html?id=${result.id}">
+            <img src=${
+					result.poster_path ? `https://image.tmdb.org/t/p/w500${result.poster_path}` : 'images/no-image.jpg'
+				} class="card-img-top" alt=${globalState.search.type === 'movie' ? result.title : result.name} />
+			</a>
+			<div class="card-body">
+				<h5 class="card-title">${globalState.search.type === 'movie' ? result.title : result.name}</h5>
+				<p class="card-text">
+					<small class="text-muted">First Aired on ${
+						globalState.search.type === 'movie' ? result.release_date : result.first_air_date
+					}</small>
+				</p>
+			</div>
+      `;
+		// Append show elements to the container
+		document.querySelector('#search-results').append(itemEl);
+	});
 }
 
 // FETCH DATA FROM TMDB API
@@ -289,7 +327,7 @@ async function searchAPIData() {
 }
 
 // Alert Element
-function showAlert(message, className) {
+function showAlert(message, className = 'error') {
 	const alertEl = document.createElement('div');
 	alertEl.classList.add('alert', className);
 	alertEl.style.position = 'relative';
