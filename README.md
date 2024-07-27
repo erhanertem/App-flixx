@@ -8,7 +8,7 @@
 
 &emsp;
 
-#### [RandomIdeas App](https://flixx-app-erhan-ertem.netlify.app)
+#### [Flixx App](https://flixx-app-erhan-ertem.netlify.app)
 
 <img src="./screenshot.webp" width="500px"/>
 
