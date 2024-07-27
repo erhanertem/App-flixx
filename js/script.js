@@ -3,9 +3,32 @@ import { API_URL, API_KEY, API_READ_ACCESS_TOKEN } from '../pass.js';
 const global = { currentPage: window.location.pathname };
 
 async function displayPopularMovies() {
-	const results = await fetchAPIData('movie/popular');
+	const { results } = await fetchAPIData('movie/popular');
 	console.log(results);
+
+	results.forEach((movie) => {
+		// Mock the movie card
+		const movieEl = document.createElement('div');
+		movieEl.classList.add('card');
+		movieEl.innerHTML = ` 
+			<a href="movie-details.html?id=${movie.id}">
+            <img src=${
+					movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'images/no-image.jpg'
+				} class="card-img-top" alt=${movie.title} />
+			</a>
+			<div class="card-body">
+				<h5 class="card-title">${movie.title}</h5>
+				<p class="card-text">
+					<small class="text-muted">Release: ${movie.release_date}</small>
+				</p>
+			</div>
+      `;
+
+		// Append movie elements to the container
+		document.querySelector('#popular-movies').appendChild(movieEl);
+	});
 }
+
 // FETCH DATA FROM TMDB API
 async function fetchAPIData(endpoint) {
 	try {
