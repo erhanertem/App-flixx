@@ -26,9 +26,71 @@ async function displayPopularMovies() {
 		document.querySelector('#popular-movies').appendChild(movieEl);
 	});
 }
+
+// READ THE MOVIE FROM THE BROWSER PATH - SIMILAR TO WHAT WE SEE IN REACT APPS
+async function displayMovieDetails() {
+	const movieId = window.location.search.split('=')[1];
+
+	const data = await fetchAPIData(`movie/${movieId}`);
+	console.log(data);
+	const {
+		original_title,
+		vote_average,
+		release_date,
+		homepage,
+		budget,
+		revenue,
+		runtime,
+		genres,
+		production_companies,
+	} = data;
+
+	const movieEl = document.querySelector('#movie-details');
+	movieEl.innerHTML = ` 
+      <div class="details-top">
+			<div>
+				<img src="images/no-image.jpg" class="card-img-top" alt= ${original_title} />
+			</div>
+			<div>
+				<h2>${original_title}</h2>
+				<p>
+					<i class="fas fa-star text-primary"></i>
+					${vote_average.toFixed(0)} / 10
+				</p>
+				<p class="text-muted">Release Date: ${release_date}</p>
+				<p>
+					Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores atque molestiae error debitis provident
+					dolore hic odit, impedit sint, voluptatum consectetur assumenda expedita perferendis obcaecati veritatis
+					voluptatibus. Voluptatum repellat suscipit, quae molestiae cupiditate modi libero dolorem commodi
+					obcaecati! Ratione quia corporis recusandae delectus perspiciatis consequatur ipsam. Cumque omnis ad
+					recusandae.
+				</p>
+				<h5>Genres</h5>
+				<ul class="list-group">
+            ${genres
+					.map((genre) => {
+						return `<li>${genre.name}</li>`;
+					})
+					.join('')}
+				</ul>
+				<a href=${homepage} target="_blank" class="btn">Visit Movie Homepage</a>
+			</div>
+		</div>
+		<div class="details-bottom">
+			<h2>Movie Info</h2>
+			<ul>
+				<li><span class="text-secondary">Budget:</span> $${budget.toLocaleString('en-US')}</li>
+				<li><span class="text-secondary">Revenue:</span> $${revenue.toLocaleString('en-US')}</li>
+				<li><span class="text-secondary">Runtime:</span> ${runtime} minutes</li>
+				<li><span class="text-secondary">Status:</span> ${release_date}</li>
+			</ul>
+			<h4>Production Companies</h4>
+			<div class="list-group"> ${production_companies.map((company) => company.name).join(', ')}</div>
+		</div>`;
+}
+
 async function displayPopularShows() {
 	const { results } = await fetchAPIData('movie/popular');
-	console.log(results[0]);
 
 	results.forEach((show) => {
 		// Mock the show card
@@ -90,20 +152,17 @@ function highlightActiveLink() {
 }
 
 function init() {
-	// CREATE PROJECT ROUTER
+	// CREATE PROJECT ROUTER BASED ON BROWSER URL CHANGES
 	switch (global.currentPage) {
 		case '/':
 		case '/index.html':
 			displayPopularMovies();
-			// homePage();
 			break;
 		case '/shows.html':
 			displayPopularShows();
-			// showsPage();
 			break;
 		case '/movie-details.html':
-			console.log('MOVIE DETAILS');
-			// moveDetailsPage();
+			displayMovieDetails();
 			break;
 		case '/tv-details.html':
 			console.log('TV DETAILS');
