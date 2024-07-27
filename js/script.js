@@ -7,6 +7,7 @@ const globalState = {
 		type: '',
 		page: 1,
 		totalPages: 1,
+		totalResults: 0,
 	},
 };
 
@@ -153,7 +154,6 @@ async function displayShowDetails() {
 	const showId = window.location.search.split('=')[1];
 
 	const data = await fetchAPIData(`tv/${showId}`);
-	console.log(data);
 
 	const {
 		backdrop_path,
@@ -262,7 +262,12 @@ async function search() {
 
 	// MAKE A SEARCH WITH THOESE PARAMS
 	if (globalState.search.term !== '' && globalState.search.term !== null) {
-		const { results, total_pages, page } = await searchAPIData();
+		const { results, total_pages, page, total_results } = await searchAPIData();
+
+		globalState.search.page = page;
+		globalState.search.totalPages = total_pages;
+		globalState.search.totalResults = total_results;
+
 		// GUARD CLAUSE
 		if (results.length === 0) {
 			showAlert('No results found');
@@ -300,10 +305,19 @@ function displaySearchResults(results) {
 				</p>
 			</div>
       `;
+
+		document.querySelector(
+			'#search-results-heading'
+		).innerHTML = `<h2>${results.length} of ${globalState.search.totalResults} Results for ${globalState.search.term}</h2>`;
+
 		// Append show elements to the container
 		document.querySelector('#search-results').append(itemEl);
 	});
+
+	displayPagination();
 }
+
+function displayPagination() {}
 
 // FETCH DATA FROM TMDB API
 async function searchAPIData() {
