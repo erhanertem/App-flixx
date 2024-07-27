@@ -249,6 +249,7 @@ function init() {
 	switch (global.currentPage) {
 		case '/':
 		case '/index.html':
+			displaySliderMovies();
 			displayPopularMovies();
 			break;
 		case '/shows.html':
@@ -271,5 +272,45 @@ function init() {
 	// HIGHLIGHT THE ACTIVE NAVIGATION LINK
 	highlightActiveLink();
 }
+
+async function displaySliderMovies() {
+	const { results } = await fetchAPIData('movie/now_playing');
+	console.log(results);
+
+	results.forEach((movie) => {
+		const div = document.createElement('div');
+		div.classList.add('swiper-slide');
+		div.innerHTML = `
+			<a href="movie-details.html?id=${movie.id}"}>
+				<img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt=${movie.title} />
+			</a>
+			<h4 class="swiper-rating"><i class="fas fa-star text-secondary"></i> ${movie.vote_average.toFixed(0)} / 10</h4>
+		`;
+		// Append movie elements to the container - DOM
+		document.querySelector('.swiper-wrapper').appendChild(div);
+		// INITIALIZE SWIPER
+		initSwiper();
+	});
+}
+
+// SWIPER OBJECT SETUP
+function initSwiper() {
+	new Swiper('.swiper', {
+		slidesPerView: 1,
+		spaceBetween: 30,
+		freeMode: true,
+		loop: true,
+		autoplay: {
+			delay: 3000,
+			disableOnInteraction: false,
+		},
+		breakpoints: {
+			500: { slidesPerView: 2 },
+			700: { slidesPerView: 3 },
+			1200: { slidesPerView: 4 },
+		},
+	});
+}
+
 // Once DOM loads, initialize
 document.addEventListener('DOMContentLoaded', init);
