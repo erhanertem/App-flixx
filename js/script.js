@@ -1,6 +1,14 @@
 import { API_URL, API_KEY, API_READ_ACCESS_TOKEN } from '../pass.js';
 
-const global = { currentPage: window.location.pathname };
+const globalState = {
+	currentPage: window.location.pathname,
+	search: {
+		term: '',
+		type: '',
+		page: 1,
+		totalPages: 1,
+	},
+};
 
 async function displayPopularMovies() {
 	const { results } = await fetchAPIData('movie/popular');
@@ -55,7 +63,6 @@ async function displayMovieDetails() {
 	const movieId = window.location.search.split('=')[1];
 
 	const data = await fetchAPIData(`movie/${movieId}`);
-	console.log(data);
 	const {
 		original_title,
 		vote_average,
@@ -238,15 +245,67 @@ function highlightActiveLink() {
 	const links = document.querySelectorAll('.nav-link');
 	links.forEach((link) => {
 		const href = link.getAttribute('href');
-		if (href === global.currentPage) {
+		if (href === globalState.currentPage) {
 			link.classList.toggle('active');
 		}
 	});
 }
 
+// Seach Movies/shows
+async function search() {
+	const queryString = window.location.search.split('?')[1];
+	const urlParams = new URLSearchParams(queryString);
+
+	globalState.search.type = urlParams.get('type');
+	globalState.search.term = urlParams.get('search-term');
+
+	if (globalState.search.term !== '' && globalState.search.term !== null) {
+		const results = await searchAPIData();
+		console.log(results);
+	} else {
+		showAlert('Please enter a search term');
+	}
+}
+
+// FETCH DATA FROM TMDB API
+async function searchAPIData() {
+	try {
+		showSpinner(true);
+		// GET RES FROM API
+		const response = await fetch(
+			`${API_URL}search/${globalState.search.type}?api_key=${API_KEY}&language=en-US&query=${globalState.search.term}`
+		);
+		// GUARD CLAUSE - IF NO RES FROM SERVER THROW ERR
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		// RETURN RESPONSE DATA IN JS READABLE FORMAT
+		return await response.json();
+	} catch (err) {
+		console.error('Network error:', err);
+	} finally {
+		showSpinner(false);
+	}
+}
+
+// Alert Element
+function showAlert(message, className) {
+	const alertEl = document.createElement('div');
+	alertEl.classList.add('alert', className);
+	alertEl.style.position = 'relative';
+	alertEl.textContent = message;
+	document.querySelector('#alert').style.position = 'absolute';
+	document.querySelector('#alert').append(alertEl);
+
+	// Delay alert go away
+	setTimeout(() => {
+		alertEl.remove();
+	}, 2000);
+}
+
 function init() {
 	// CREATE PROJECT ROUTER BASED ON BROWSER URL CHANGES
-	switch (global.currentPage) {
+	switch (globalState.currentPage) {
 		case '/':
 		case '/index.html':
 			displaySliderMovies();
@@ -262,8 +321,7 @@ function init() {
 			displayShowDetails();
 			break;
 		case '/search.html':
-			console.log('SEARCH');
-			// searchPage();
+			search();
 			break;
 		default:
 			notFoundPage();
@@ -275,7 +333,6 @@ function init() {
 
 async function displaySliderMovies() {
 	const { results } = await fetchAPIData('movie/now_playing');
-	console.log(results);
 
 	results.forEach((movie) => {
 		const div = document.createElement('div');
