@@ -4,7 +4,6 @@ const global = { currentPage: window.location.pathname };
 
 async function displayPopularMovies() {
 	const { results } = await fetchAPIData('movie/popular');
-
 	results.forEach((movie) => {
 		// Mock the movie card
 		const movieEl = document.createElement('div');
@@ -29,6 +28,7 @@ async function displayPopularMovies() {
 }
 async function displayPopularShows() {
 	const { results } = await fetchAPIData('movie/popular');
+	console.log(results[0]);
 
 	results.forEach((show) => {
 		// Mock the show card
@@ -38,12 +38,12 @@ async function displayPopularShows() {
 			<a href="tv-details.html?id=${show.id}">
             <img src=${
 					show.poster_path ? `https://image.tmdb.org/t/p/w500${show.poster_path}` : 'images/no-image.jpg'
-				} class="card-img-top" alt=${show.name} />
+				} class="card-img-top" alt=${show.title} />
 			</a>
 			<div class="card-body">
-				<h5 class="card-title">${show.name}</h5>
+				<h5 class="card-title">${show.title}</h5>
 				<p class="card-text">
-					<small class="text-muted">Air Date: ${show.first_air_date}</small>
+					<small class="text-muted">Aired on ${show.release_date}</small>
 				</p>
 			</div>
       `;
