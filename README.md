@@ -4,7 +4,7 @@
 
 #### **Objective:** Flixx App
 
--  Mini Project with Vanilla JavaScript w/ API fetch operations
+-  Mini multi page project with Vanilla JavaScript and API fetch operations
 
 &emsp;
 
