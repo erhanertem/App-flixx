@@ -4,7 +4,6 @@ const global = { currentPage: window.location.pathname };
 
 async function displayPopularMovies() {
 	const { results } = await fetchAPIData('movie/popular');
-	console.log(results);
 
 	results.forEach((movie) => {
 		// Mock the movie card
@@ -29,9 +28,17 @@ async function displayPopularMovies() {
 	});
 }
 
+// SPINNER
+function showSpinner(state) {
+	state
+		? document.querySelector('.spinner').classList.add('show')
+		: document.querySelector('.spinner').classList.remove('show');
+}
+
 // FETCH DATA FROM TMDB API
 async function fetchAPIData(endpoint) {
 	try {
+		showSpinner(true);
 		// GET RES FROM API
 		const response = await fetch(`${API_URL}${endpoint}?api_key=${API_KEY}&language=en-US`);
 		// GUARD CLAUSE - IF NO RES FROM SERVER THROW ERR
@@ -42,6 +49,8 @@ async function fetchAPIData(endpoint) {
 		return await response.json();
 	} catch (err) {
 		console.error('Network error:', err);
+	} finally {
+		showSpinner(false);
 	}
 }
 
