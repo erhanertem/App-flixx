@@ -27,7 +27,31 @@ async function displayPopularMovies() {
 		document.querySelector('#popular-movies').appendChild(movieEl);
 	});
 }
+async function displayPopularShows() {
+	const { results } = await fetchAPIData('movie/popular');
 
+	results.forEach((show) => {
+		// Mock the show card
+		const showEl = document.createElement('div');
+		showEl.classList.add('card');
+		showEl.innerHTML = ` 
+			<a href="tv-details.html?id=${show.id}">
+            <img src=${
+					show.poster_path ? `https://image.tmdb.org/t/p/w500${show.poster_path}` : 'images/no-image.jpg'
+				} class="card-img-top" alt=${show.name} />
+			</a>
+			<div class="card-body">
+				<h5 class="card-title">${show.name}</h5>
+				<p class="card-text">
+					<small class="text-muted">Air Date: ${show.first_air_date}</small>
+				</p>
+			</div>
+      `;
+
+		// Append show elements to the container
+		document.querySelector('#popular-shows').appendChild(showEl);
+	});
+}
 // SPINNER
 function showSpinner(state) {
 	state
@@ -70,11 +94,11 @@ function init() {
 	switch (global.currentPage) {
 		case '/':
 		case '/index.html':
-			console.log(displayPopularMovies());
+			displayPopularMovies();
 			// homePage();
 			break;
 		case '/shows.html':
-			console.log('SHOWS');
+			displayPopularShows();
 			// showsPage();
 			break;
 		case '/movie-details.html':
