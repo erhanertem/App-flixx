@@ -7,7 +7,7 @@
 		"devcon": "webpack-dev-server --mode development",
 		"dev": "webpack serve",
 		"build": "webpack --config webpack.config.js --mode production",
-		"serve": "http-server dist",
+		"serve": "http-server ./dist -a localhost -p 7000 -o -c1",
 		"prod": "npm install && npm run build && npm run serve"
 	},
 	"keywords": [],
