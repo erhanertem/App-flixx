@@ -4,15 +4,15 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="shortcut icon" href="../../favicon.ico" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet" />
-		<link rel="stylesheet" href="lib/fontawesome.css" />
-		<link rel="stylesheet" href="css/style.css" />
-		<link rel="stylesheet" href="css/spinner.css" />
+		<link rel="stylesheet" href="@library/fontawesome.css" />
+		<link rel="stylesheet" href="@styles/style.css" />
+		<link rel="stylesheet" href="@styles/spinner.css" />
 
-		<script type="module" src="pass.js"></script>
-		<script type="module" src="js/script.js" defer></script>
+		<script type="module" src="@scripts/script.js" defer></script>
 
 		<title>Flixx</title>
 	</head>
@@ -33,11 +33,43 @@
 			</div>
 		</header>
 
-		<!-- Popular TV Shows -->
+		<!-- Now Playing Section -->
+		<section class="now-playing">
+			<h2>Now Playing</h2>
+			<div class="swiper">
+				<div class="swiper-wrapper">
+					<!-- SLIDERS GOES HERE -->
+				</div>
+			</div>
+		</section>
+
+		<!-- Search Movies -->
+		<section class="search">
+			<div class="container">
+				<div id="alert"></div>
+				<form action="/search.html" class="search-form">
+					<!-- movies and shows radio box -->
+					<div class="search-radio">
+						<input type="radio" id="movie" name="type" value="movie" checked />
+						<label for="movie">Movies</label>
+						<input type="radio" id="tv" name="type" value="tv" />
+						<label for="tv">TV Shows</label>
+					</div>
+					<div class="search-flex">
+						<input type="text" name="search-term" id="search-term" placeholder="Enter search term" />
+						<button class="btn" type="submit">
+							<i class="fas fa-search"></i>
+						</button>
+					</div>
+				</form>
+			</div>
+		</section>
+
+		<!-- Popular Movies -->
 		<section class="container">
-			<h2>Popular TV Shows</h2>
-			<div id="popular-shows" class="grid">
-				<!-- POPULAR SHOWS GOES HERE -->
+			<h2>Popular Movies</h2>
+			<div id="popular-movies" class="grid">
+				<!-- POPULAR MOVIE ITEMS GOES HERE -->
 			</div>
 		</section>
 

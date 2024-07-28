@@ -1,4 +1,15 @@
-import { API_URL, API_KEY, API_READ_ACCESS_TOKEN } from '../pass.js';
+// `process.env` is the one defined in the webpack's DefinePlugin
+const envVariables = process.env;
+// Read vars from envVariables object
+const { API_URL, API_KEY } = envVariables;
+
+// import Swiper bundle with all modules installed
+import Swiper from 'swiper/bundle';
+// import styles bundle
+import 'swiper/css/bundle';
+
+// For webpack to handle static images
+import noImage from '../images/no-image.jpg';
 
 const globalState = {
 	currentPage: window.location.pathname,
@@ -20,7 +31,7 @@ async function displayPopularMovies() {
 		movieEl.innerHTML = ` 
 			<a href="movie-details.html?id=${movie.id}">
             <img src=${
-					movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'images/no-image.jpg'
+					movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : noImage
 				} class="card-img-top" alt=${movie.title} />
 			</a>
 			<div class="card-body">
@@ -83,7 +94,7 @@ async function displayMovieDetails() {
       <div class="details-top">
 			<div>
 				<img src=${
-					poster_path ? `https://image.tmdb.org/t/p/w500${poster_path}` : 'images/no-image.jpg'
+					poster_path ? `https://image.tmdb.org/t/p/w500${poster_path}` : noImage
 				} class="card-img-top" alt= ${original_title} />
 			</div>
 			<div>
@@ -133,7 +144,7 @@ async function displayPopularShows() {
 		showEl.innerHTML = ` 
 			<a href="tv-details.html?id=${show.id}">
             <img src=${
-					show.poster_path ? `https://image.tmdb.org/t/p/w500${show.poster_path}` : 'images/no-image.jpg'
+					show.poster_path ? `https://image.tmdb.org/t/p/w500${show.poster_path}` : noImage
 				} class="card-img-top" alt=${show.name} />
 			</a>
 			<div class="card-body">
@@ -175,7 +186,7 @@ async function displayShowDetails() {
    <div class="details-top">
 					<div>
 						<img src=${
-							poster_path ? `https://image.tmdb.org/t/p/w500${poster_path}` : 'images/no-image.jpg'
+							poster_path ? `https://image.tmdb.org/t/p/w500${poster_path}` : noImage
 						} class="card-img-top" alt=${original_name} />
 					</div>
 					<div>
@@ -293,7 +304,7 @@ function displaySearchResults(results) {
 		itemEl.innerHTML = ` 
 			<a href="${globalState.search.type}-details.html?id=${result.id}">
             <img src=${
-					result.poster_path ? `https://image.tmdb.org/t/p/w500${result.poster_path}` : 'images/no-image.jpg'
+					result.poster_path ? `https://image.tmdb.org/t/p/w500${result.poster_path}` : noImage
 				} class="card-img-top" alt=${globalState.search.type === 'movie' ? result.title : result.name} />
 			</a>
 			<div class="card-body">
