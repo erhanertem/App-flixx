@@ -9,7 +9,7 @@
 
 &emsp;
 
-#### [Flixx App](https://app-flixx-erhan-ertem.onrender.com)
+#### [Flixx App](https://app-flixx.onrender.com)
 
 <img src="./screenshot.webp" width="500px"/>
 
