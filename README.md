@@ -9,7 +9,7 @@
 
 &emsp;
 
-###### ⚠️Free-tier render services may get throttled leading to delayed app loading 
+###### ⚠️Free-tier render services may experience throttling, leading to delayed app loading times.
 #### [Flixx App](https://app-flixx.onrender.com)
 
 <img src="./screenshot.webp" width="500px"/>
